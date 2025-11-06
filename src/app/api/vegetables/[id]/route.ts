@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -16,6 +16,7 @@ export async function PUT(
       );
     }
 
+    const params = await context.params;
     const body = await request.json();
     const { name, price, image, description } = body;
 
@@ -38,7 +39,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -49,6 +50,7 @@ export async function DELETE(
       );
     }
 
+    const params = await context.params;
     await db.deleteVegetable(params.id);
     return NextResponse.json({ message: 'Vegetable deleted successfully' });
   } catch (error) {
