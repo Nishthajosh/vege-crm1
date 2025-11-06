@@ -1,13 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-
-interface UserWithRole {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  role?: string;
-}
+import type { Session } from "next-auth";
 
 export async function getSession() {
   return await getServerSession();
@@ -15,19 +9,24 @@ export async function getSession() {
 
 export async function getCurrentUser() {
   const session = await getSession();
-  return session?.user as UserWithRole | undefined;
+  return session?.user;
 }
 
-export async function requireAuth(): Promise<UserWithRole> {
-  const user = await getCurrentUser();
+export async function requireAuth() {
+  const session = await getSession();
+  const user = session?.user;
   if (!user) {
     redirect("/login");
   }
-  return user as UserWithRole;
+  return user;
 }
 
-export async function requireAdmin(): Promise<UserWithRole> {
-  const user = await requireAuth();
+export async function requireAdmin() {
+  const session = await getSession();
+  const user = session?.user;
+  if (!user) {
+    redirect("/login");
+  }
   if (user.role !== "admin") {
     redirect("/");
   }
