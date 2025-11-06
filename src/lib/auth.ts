@@ -18,15 +18,15 @@ export async function getCurrentUser() {
   return session?.user as UserWithRole | undefined;
 }
 
-export async function requireAuth() {
+export async function requireAuth(): Promise<UserWithRole> {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");
   }
-  return user;
+  return user as UserWithRole;
 }
 
-export async function requireAdmin() {
+export async function requireAdmin(): Promise<UserWithRole> {
   const user = await requireAuth();
   if (user.role !== "admin") {
     redirect("/");
