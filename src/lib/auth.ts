@@ -21,20 +21,6 @@ export async function requireAuth() {
   return user;
 }
 
-export async function requireAdmin() {
-  const session = await getSession();
-  const user = session?.user;
-  if (!user) {
-    redirect("/login");
-  }
-  // Type narrowing - user is guaranteed to be non-null here
-  const authenticatedUser = user as NonNullable<typeof user> & { role?: string };
-  if (authenticatedUser.role !== "admin") {
-    redirect("/");
-  }
-  return authenticatedUser;
-}
-
 export async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 12);
 }
