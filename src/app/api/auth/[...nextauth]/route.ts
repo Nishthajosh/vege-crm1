@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { verifyPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export const authOptions = {
+const authOptions = {
   providers: [
     CredentialsProvider({
       id: "credentials",
