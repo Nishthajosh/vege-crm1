@@ -27,10 +27,12 @@ export async function requireAdmin() {
   if (!user) {
     redirect("/login");
   }
-  if (user.role !== "admin") {
+  // Type narrowing - user is guaranteed to be non-null here
+  const authenticatedUser = user as NonNullable<typeof user> & { role?: string };
+  if (authenticatedUser.role !== "admin") {
     redirect("/");
   }
-  return user;
+  return authenticatedUser;
 }
 
 export async function hashPassword(password: string): Promise<string> {
