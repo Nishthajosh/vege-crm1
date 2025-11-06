@@ -17,6 +17,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   isAdmin: boolean;
   isBroker: boolean;
+  isFarmer: boolean;
   isRetailer: boolean;
 }
 
@@ -55,6 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut: handleSignOut,
     isAdmin: user?.role === "admin",
     isBroker: user?.role === "broker",
+    isFarmer: user?.role === "farmer",
     isRetailer: user?.role === "retailer",
   };
 

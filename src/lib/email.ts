@@ -1,11 +1,18 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function sendVerificationEmail(
   email: string,
   verificationToken: string
 ): Promise<void> {
+  // Skip email sending if Resend is not configured
+  if (!resend || !process.env.RESEND_API_KEY) {
+    console.log('Resend not configured. Skipping verification email.');
+    console.log('Verification token:', verificationToken);
+    return;
+  }
+
   const verificationUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
   
   try {
@@ -36,6 +43,12 @@ export async function sendVerificationEmail(
 }
 
 export async function sendWelcomeEmail(email: string, name?: string): Promise<void> {
+  // Skip email sending if Resend is not configured
+  if (!resend || !process.env.RESEND_API_KEY) {
+    console.log('Resend not configured. Skipping welcome email.');
+    return;
+  }
+
   try {
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',

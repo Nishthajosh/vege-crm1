@@ -175,9 +175,9 @@ export default function RegisterPage() {
                 }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition bg-white"
               >
-                <option value="broker">🌾 Farmer</option>
+                <option value="farmer">🌾 Farmer</option>
+                <option value="broker">📊 Broker</option>
                 <option value="retailer">🛒 Retailer</option>
-                <option value="admin">⚙️ Admin</option>
               </select>
             </div>
 

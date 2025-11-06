@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/lib/auth-context";
+import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
@@ -12,7 +12,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,14 +26,39 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await signIn(email, password);
-      router.refresh();
-      router.push("/dashboard");
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      // Wait a bit for session to be established
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Fetch user session to get role
+      const response = await fetch("/api/auth/session");
+      const session = await response.json();
+      
+      // Redirect based on role
+      if (session?.user?.role === "broker") {
+        window.location.href = "/broker/dashboard";
+      } else if (session?.user?.role === "farmer") {
+        window.location.href = "/farmer/dashboard";
+      } else if (session?.user?.role === "retailer") {
+        window.location.href = "/retailer/vegetables";
+      } else if (session?.user?.role === "admin") {
+        window.location.href = "/dashboard";
+      } else {
+        window.location.href = "/dashboard";
+      }
     } catch (err: any) {
       console.error("Login error:", err);
       setError(err.message || "Invalid email or password");
       setPassword("");
-    } finally {
       setLoading(false);
     }
   };

@@ -58,8 +58,8 @@ export const authOptions = {
             };
           }
 
-          // Check if email is verified
-          if (user.emailVerified === 0) {
+          // Check if email is verified (only if Resend is configured)
+          if (process.env.RESEND_API_KEY && user.emailVerified === 0) {
             throw new Error("Please verify your email first. Check your inbox for the verification link.");
           }
 

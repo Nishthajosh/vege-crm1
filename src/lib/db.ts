@@ -613,7 +613,7 @@ export const mockDb = (() => {
       password: '$2b$12$8IbtbKvnOvh4EOrgnU07rebkMtiBzBf7t9VHRWwOq3bU3GOAvJRQO',
       name: 'Test Farmer',
       image: null,
-      role: 'broker',
+      role: 'farmer',
       emailVerified: 1,
       emailVerificationToken: null,
       emailVerificationExpires: null,

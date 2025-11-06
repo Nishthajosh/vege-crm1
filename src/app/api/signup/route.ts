@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate role
-    const validRoles = ['broker', 'retailer'];
+    const validRoles = ['farmer', 'broker', 'retailer'];
     const userRole = role && validRoles.includes(role) ? role : 'retailer';
 
     // Validate email format
