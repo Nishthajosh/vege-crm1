@@ -2,13 +2,20 @@ import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 
+interface UserWithRole {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  role?: string;
+}
+
 export async function getSession() {
   return await getServerSession();
 }
 
 export async function getCurrentUser() {
   const session = await getSession();
-  return session?.user;
+  return session?.user as UserWithRole | undefined;
 }
 
 export async function requireAuth() {
