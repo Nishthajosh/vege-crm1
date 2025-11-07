@@ -47,11 +47,40 @@ export default function FarmerDashboard() {
           totalOrders: data.totalOrders || 0,
           topDemand: data.topDemand || 'N/A',
         });
+
+        // If no vegetables exist, automatically initialize them
+        if (data.totalVegetables === 0) {
+          await initializeVegetables();
+        }
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const initializeVegetables = async () => {
+    try {
+      const response = await fetch('/api/vegetables/init', {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        // Refresh stats after initialization
+        const statsResponse = await fetch('/api/stats');
+        if (statsResponse.ok) {
+          const data = await statsResponse.json();
+          setStats({
+            totalVegetables: data.totalVegetables || 0,
+            totalRevenue: data.totalRevenue || 0,
+            totalOrders: data.totalOrders || 0,
+            topDemand: data.topDemand || 'N/A',
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing vegetables:', error);
     }
   };
 
@@ -88,7 +117,7 @@ export default function FarmerDashboard() {
 
             <div className="bg-white rounded-lg shadow p-6">
               <p className="text-sm text-gray-600 font-medium">Total Revenue</p>
-              <h3 className="text-3xl font-bold text-gray-900 mt-2">?{stats.totalRevenue.toFixed(2)}</h3>
+              <h3 className="text-3xl font-bold text-gray-900 mt-2">₹{stats.totalRevenue.toFixed(2)}</h3>
             </div>
 
             <div className="bg-white rounded-lg shadow p-6">
