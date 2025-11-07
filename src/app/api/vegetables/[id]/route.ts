@@ -3,13 +3,38 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { db } from '@/lib/db';
 
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const params = await context.params;
+    const vegetable = await db.getVegetableById(params.id);
+    
+    if (!vegetable) {
+      return NextResponse.json(
+        { error: 'Vegetable not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(vegetable);
+  } catch (error) {
+    console.error('Error fetching vegetable:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch vegetable' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== 'broker') {
+    if (!session?.user || !['broker', 'farmer'].includes((session.user as any).role)) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -18,11 +43,12 @@ export async function PUT(
 
     const params = await context.params;
     const body = await request.json();
-    const { name, price, image, description } = body;
+    const { name, price, quantity, image, description } = body;
 
     const updates: any = {};
     if (name !== undefined) updates.name = name;
     if (price !== undefined) updates.price = parseFloat(price);
+    if (quantity !== undefined) updates.quantity = parseFloat(quantity);
     if (image !== undefined) updates.image = image;
     if (description !== undefined) updates.description = description;
 
@@ -43,7 +69,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== 'broker') {
+    if (!session?.user || !['broker', 'farmer'].includes((session.user as any).role)) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
