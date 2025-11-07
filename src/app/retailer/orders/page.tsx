@@ -6,21 +6,28 @@ import Link from 'next/link';
 
 interface OrderItem {
   vegetableId: string;
-  vegetableName: string;
   quantity: number;
   price: number;
+  vegetable?: {
+    id: string;
+    name: string;
+    unit: string;
+  };
+  vegetableName?: string;
   image?: string;
 }
 
 interface Order {
   id: string;
   userId: string;
-  date: string;
-  name: string;
+  retailerId?: string;
+  date?: string;
+  name?: string;
   status: string;
-  totalPrice: number;
-  quantity: number;
-  createdAt: number;
+  totalPrice?: number;
+  totalAmount?: number;
+  quantity?: number;
+  createdAt: number | string;
   items?: OrderItem[];
 }
 
@@ -37,7 +44,10 @@ export default function OrdersPage() {
       const response = await fetch('/api/orders');
       if (response.ok) {
         const data = await response.json();
-        setOrders(data);
+        console.log('Orders response:', data);
+        // Handle both formats: { orders: [...] } or direct array
+        const ordersData = data.orders || data || [];
+        setOrders(Array.isArray(ordersData) ? ordersData : []);
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -59,8 +69,9 @@ export default function OrdersPage() {
     }
   };
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString('en-IN', {
+  const formatDate = (timestamp: number | string) => {
+    const date = typeof timestamp === 'string' ? new Date(timestamp) : new Date(timestamp * 1000);
+    return date.toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -137,7 +148,7 @@ export default function OrdersPage() {
                           {order.status}
                         </span>
                         <p className="text-lg font-bold text-gray-900 mt-2">
-                          ₹{order.totalPrice?.toFixed(2) || '0.00'}
+                          ₹{(order.totalPrice || order.totalAmount || 0).toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -147,30 +158,34 @@ export default function OrdersPage() {
                     <div className="px-6 py-4">
                       <h4 className="text-sm font-medium text-gray-700 mb-3">Order Items</h4>
                       <div className="space-y-3">
-                        {order.items.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              {item.image && (
-                                <img
-                                  src={item.image}
-                                  alt={item.vegetableName}
-                                  className="h-12 w-12 object-contain mr-3"
-                                />
-                              )}
-                              <div>
-                                <p className="text-sm font-medium text-gray-900">
-                                  {item.vegetableName}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  {item.quantity} kg × ₹{item.price}/kg
-                                </p>
+                        {order.items.map((item, index) => {
+                          const vegName = item.vegetable?.name || item.vegetableName || 'Unknown';
+                          const vegUnit = item.vegetable?.unit || 'kg';
+                          return (
+                            <div key={index} className="flex items-center justify-between">
+                              <div className="flex items-center">
+                                {item.image && (
+                                  <img
+                                    src={item.image}
+                                    alt={vegName}
+                                    className="h-12 w-12 object-contain mr-3"
+                                  />
+                                )}
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {vegName}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {item.quantity} {vegUnit} × ₹{item.price}/{vegUnit}
+                                  </p>
+                                </div>
                               </div>
+                              <p className="text-sm font-semibold text-gray-900">
+                                ₹{(item.quantity * item.price).toFixed(2)}
+                              </p>
                             </div>
-                            <p className="text-sm font-semibold text-gray-900">
-                              ₹{(item.quantity * item.price).toFixed(2)}
-                            </p>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
