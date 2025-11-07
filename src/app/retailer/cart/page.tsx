@@ -149,6 +149,17 @@ export default function CartPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
+          <div className="mb-4">
+            <Link 
+              href="/retailer/dashboard" 
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium inline-flex items-center"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Dashboard
+            </Link>
+          </div>
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>

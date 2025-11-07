@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Link from 'next/link';
 
 interface OrderItem {
   vegetableId: string;
@@ -73,9 +74,26 @@ export default function OrdersPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Order History</h1>
-            <p className="mt-2 text-sm text-gray-600">View all your past orders</p>
+          <div className="mb-6 flex justify-between items-start">
+            <div>
+              <Link 
+                href="/retailer/dashboard" 
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium mb-2 inline-flex items-center"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Dashboard
+              </Link>
+              <h1 className="text-3xl font-bold text-gray-900 mt-1">Order History</h1>
+              <p className="mt-2 text-sm text-gray-600">View all your past orders</p>
+            </div>
+            <Link
+              href="/retailer/vegetables"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium"
+            >
+              Continue Shopping
+            </Link>
           </div>
 
           {loading ? (
