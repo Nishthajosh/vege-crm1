@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 
 interface OrderItem {
-  vegetableId: number;
+  vegetableId: string;
   vegetableName: string;
   quantity: number;
   price: number;
@@ -12,11 +12,14 @@ interface OrderItem {
 }
 
 interface Order {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
+  date: string;
+  name: string;
   status: string;
-  totalAmount: number;
-  createdAt: string;
+  totalPrice: number;
+  quantity: number;
+  createdAt: number;
   items?: OrderItem[];
 }
 
@@ -55,8 +58,8 @@ export default function OrdersPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -116,7 +119,7 @@ export default function OrdersPage() {
                           {order.status}
                         </span>
                         <p className="text-lg font-bold text-gray-900 mt-2">
-                          ₹{order.totalAmount.toFixed(2)}
+                          ₹{order.totalPrice?.toFixed(2) || '0.00'}
                         </p>
                       </div>
                     </div>
