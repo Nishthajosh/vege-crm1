@@ -237,13 +237,17 @@ export default function VegetablesPage() {
                     Image URL
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     value={formData.image}
                     onChange={(e) =>
                       setFormData({ ...formData, image: e.target.value })
                     }
                     className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"
+                    placeholder="/vegetables/tomato.svg"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Available images: /vegetables/tomato.svg, /vegetables/potato.svg, /vegetables/carrot.svg, /vegetables/onion.svg, /vegetables/cabbage.svg, /vegetables/cucumber.svg
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">

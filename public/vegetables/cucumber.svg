@@ -1,0 +1,23 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#fef3c7"/>
+  <!-- Cucumber body -->
+  <ellipse cx="200" cy="200" rx="130" ry="50" fill="#15803d"/>
+  <ellipse cx="200" cy="200" rx="130" ry="50" fill="#16a34a" opacity="0.8"/>
+  <!-- Bumps/texture -->
+  <circle cx="150" cy="185" r="6" fill="#14532d" opacity="0.4"/>
+  <circle cx="175" cy="195" r="5" fill="#14532d" opacity="0.4"/>
+  <circle cx="200" cy="190" r="6" fill="#14532d" opacity="0.4"/>
+  <circle cx="225" cy="195" r="5" fill="#14532d" opacity="0.4"/>
+  <circle cx="250" cy="185" r="6" fill="#14532d" opacity="0.4"/>
+  <circle cx="165" cy="210" r="5" fill="#14532d" opacity="0.4"/>
+  <circle cx="190" cy="215" r="6" fill="#14532d" opacity="0.4"/>
+  <circle cx="215" cy="210" r="5" fill="#14532d" opacity="0.4"/>
+  <circle cx="240" cy="215" r="6" fill="#14532d" opacity="0.4"/>
+  <!-- Highlight -->
+  <ellipse cx="180" cy="180" rx="30" ry="15" fill="#86efac" opacity="0.4"/>
+  <!-- Ends -->
+  <circle cx="70" cy="200" r="25" fill="#22c55e" opacity="0.8"/>
+  <circle cx="330" cy="200" r="25" fill="#22c55e" opacity="0.8"/>
+  <!-- Label -->
+  <text x="200" y="300" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#14532d" text-anchor="middle">Cucumber</text>
+</svg>

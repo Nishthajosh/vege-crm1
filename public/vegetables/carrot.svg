@@ -1,0 +1,15 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#fef3c7"/>
+  <!-- Carrot body -->
+  <path d="M 200 120 L 160 320 Q 200 340 240 320 Z" fill="#ea580c"/>
+  <path d="M 200 120 L 160 320 Q 200 340 240 320 Z" fill="#f97316" opacity="0.8"/>
+  <!-- Lines on carrot -->
+  <path d="M 185 160 Q 175 200 170 250" stroke="#9a3412" stroke-width="2" fill="none"/>
+  <path d="M 215 160 Q 225 200 230 250" stroke="#9a3412" stroke-width="2" fill="none"/>
+  <!-- Leaves -->
+  <path d="M 200 120 Q 180 90 170 80 Q 175 85 185 100" fill="#16a34a"/>
+  <path d="M 200 120 Q 200 80 195 70 Q 198 75 200 95" fill="#22c55e"/>
+  <path d="M 200 120 Q 220 90 230 80 Q 225 85 215 100" fill="#16a34a"/>
+  <!-- Label -->
+  <text x="200" y="380" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#9a3412" text-anchor="middle">Carrot</text>
+</svg>

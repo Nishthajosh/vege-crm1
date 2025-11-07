@@ -1,0 +1,15 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#fef3c7"/>
+  <!-- Potato -->
+  <ellipse cx="200" cy="200" rx="90" ry="70" fill="#92400e"/>
+  <ellipse cx="200" cy="200" rx="90" ry="70" fill="#b45309" opacity="0.8"/>
+  <!-- Spots -->
+  <circle cx="170" cy="185" r="8" fill="#78350f" opacity="0.6"/>
+  <circle cx="220" cy="195" r="6" fill="#78350f" opacity="0.6"/>
+  <circle cx="195" cy="220" r="7" fill="#78350f" opacity="0.6"/>
+  <circle cx="210" cy="175" r="5" fill="#78350f" opacity="0.6"/>
+  <!-- Highlight -->
+  <ellipse cx="175" cy="175" rx="20" ry="25" fill="#fbbf24" opacity="0.3"/>
+  <!-- Label -->
+  <text x="200" y="320" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#78350f" text-anchor="middle">Potato</text>
+</svg>

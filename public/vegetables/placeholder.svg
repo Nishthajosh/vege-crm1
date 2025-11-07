@@ -1,0 +1,6 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#f3f4f6"/>
+  <text x="200" y="180" font-family="Arial, sans-serif" font-size="48" fill="#9ca3af" text-anchor="middle">🥬</text>
+  <text x="200" y="240" font-family="Arial, sans-serif" font-size="20" fill="#6b7280" text-anchor="middle">Vegetable Image</text>
+  <text x="200" y="270" font-family="Arial, sans-serif" font-size="14" fill="#9ca3af" text-anchor="middle">Upload your image here</text>
+</svg>

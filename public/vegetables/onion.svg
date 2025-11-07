@@ -1,0 +1,18 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#fef3c7"/>
+  <!-- Onion body -->
+  <ellipse cx="200" cy="220" rx="75" ry="85" fill="#c2410c"/>
+  <ellipse cx="200" cy="220" rx="75" ry="85" fill="#ea580c" opacity="0.7"/>
+  <!-- Layers -->
+  <ellipse cx="200" cy="220" rx="60" ry="70" fill="none" stroke="#92400e" stroke-width="2" opacity="0.5"/>
+  <ellipse cx="200" cy="220" rx="45" ry="55" fill="none" stroke="#92400e" stroke-width="2" opacity="0.5"/>
+  <!-- Sprout -->
+  <rect x="195" y="130" width="10" height="25" fill="#16a34a" rx="2"/>
+  <path d="M 200 130 Q 180 110 175 100" stroke="#22c55e" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M 200 130 Q 220 110 225 100" stroke="#22c55e" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- Roots -->
+  <path d="M 150 295 Q 145 310 140 320" stroke="#78350f" stroke-width="3" fill="none"/>
+  <path d="M 250 295 Q 255 310 260 320" stroke="#78350f" stroke-width="3" fill="none"/>
+  <!-- Label -->
+  <text x="200" y="360" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#92400e" text-anchor="middle">Onion</text>
+</svg>

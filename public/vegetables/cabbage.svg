@@ -1,0 +1,17 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#fef3c7"/>
+  <!-- Outer leaves -->
+  <circle cx="200" cy="200" r="95" fill="#15803d"/>
+  <circle cx="200" cy="200" r="95" fill="#16a34a" opacity="0.8"/>
+  <!-- Middle leaves -->
+  <circle cx="200" cy="200" r="75" fill="#22c55e" opacity="0.7"/>
+  <!-- Inner leaves -->
+  <circle cx="200" cy="200" r="55" fill="#86efac" opacity="0.6"/>
+  <!-- Leaf veins -->
+  <path d="M 200 145 L 200 255" stroke="#14532d" stroke-width="3" opacity="0.3"/>
+  <path d="M 145 200 L 255 200" stroke="#14532d" stroke-width="3" opacity="0.3"/>
+  <path d="M 160 160 L 240 240" stroke="#14532d" stroke-width="2" opacity="0.3"/>
+  <path d="M 240 160 L 160 240" stroke="#14532d" stroke-width="2" opacity="0.3"/>
+  <!-- Label -->
+  <text x="200" y="330" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#14532d" text-anchor="middle">Cabbage</text>
+</svg>
