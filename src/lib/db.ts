@@ -66,6 +66,28 @@ export interface OrderItem {
   price: number;
 }
 
+export interface Auction {
+  id: string;
+  farmerId: string;
+  vegetableId: string;
+  quantity: number;
+  basePrice: number;
+  currentBid: number | null;
+  highestBidderId: string | null;
+  startTime: number;
+  endTime: number;
+  status: string;
+  createdAt: number;
+}
+
+export interface Bid {
+  id: string;
+  auctionId: string;
+  bidderId: string;
+  amount: number;
+  timestamp: number;
+}
+
 // Get D1 database instance
 // This will be available in Cloudflare Workers/Pages environment
 function getD1Database(): D1Database | null {
@@ -580,6 +602,207 @@ export const db = {
     
     return result?.results || [];
   },
+
+  // Auction operations
+  async createAuction(data: {
+    id: string;
+    farmerId: string;
+    vegetableId: string;
+    quantity: number;
+    basePrice: number;
+    startTime: number;
+    endTime: number;
+  }): Promise<Auction> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.createAuction(data);
+    }
+    
+    await database
+      .prepare(
+        'INSERT INTO Auction (id, farmerId, vegetableId, quantity, basePrice, startTime, endTime, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+      )
+      .bind(
+        data.id,
+        data.farmerId,
+        data.vegetableId,
+        data.quantity,
+        data.basePrice,
+        data.startTime,
+        data.endTime,
+        'active'
+      )
+      .run();
+    
+    const auction = await this.getAuctionById(data.id);
+    if (!auction) {
+      throw new Error('Failed to create auction');
+    }
+    
+    return auction;
+  },
+
+  async getAuctionById(id: string): Promise<Auction | null> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.getAuctionById(id);
+    }
+    
+    const result = await database
+      .prepare('SELECT * FROM Auction WHERE id = ?')
+      .bind(id)
+      .first<Auction>();
+    
+    return result || null;
+  },
+
+  async getAllAuctions(): Promise<Auction[]> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.getAllAuctions();
+    }
+    
+    const result = await database
+      .prepare('SELECT * FROM Auction ORDER BY createdAt DESC')
+      .all<Auction>();
+    
+    return result?.results || [];
+  },
+
+  async getActiveAuctions(): Promise<Auction[]> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.getActiveAuctions();
+    }
+    
+    const now = Math.floor(Date.now() / 1000);
+    const result = await database
+      .prepare('SELECT * FROM Auction WHERE status = ? AND endTime > ? ORDER BY endTime ASC')
+      .bind('active', now)
+      .all<Auction>();
+    
+    return result?.results || [];
+  },
+
+  async getAuctionsByFarmer(farmerId: string): Promise<Auction[]> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.getAuctionsByFarmer(farmerId);
+    }
+    
+    const result = await database
+      .prepare('SELECT * FROM Auction WHERE farmerId = ? ORDER BY createdAt DESC')
+      .bind(farmerId)
+      .all<Auction>();
+    
+    return result?.results || [];
+  },
+
+  async updateAuction(id: string, updates: Partial<Auction>): Promise<Auction | null> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.updateAuction(id, updates);
+    }
+    
+    const setParts: string[] = [];
+    const values: any[] = [];
+    
+    if (updates.currentBid !== undefined) {
+      setParts.push('currentBid = ?');
+      values.push(updates.currentBid);
+    }
+    if (updates.highestBidderId !== undefined) {
+      setParts.push('highestBidderId = ?');
+      values.push(updates.highestBidderId);
+    }
+    if (updates.status !== undefined) {
+      setParts.push('status = ?');
+      values.push(updates.status);
+    }
+    
+    if (setParts.length === 0) {
+      return this.getAuctionById(id);
+    }
+    
+    values.push(id);
+    
+    await database
+      .prepare(`UPDATE Auction SET ${setParts.join(', ')} WHERE id = ?`)
+      .bind(...values)
+      .run();
+    
+    return this.getAuctionById(id);
+  },
+
+  async createBid(data: {
+    id: string;
+    auctionId: string;
+    bidderId: string;
+    amount: number;
+  }): Promise<Bid> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.createBid(data);
+    }
+    
+    await database
+      .prepare('INSERT INTO Bid (id, auctionId, bidderId, amount) VALUES (?, ?, ?, ?)')
+      .bind(data.id, data.auctionId, data.bidderId, data.amount)
+      .run();
+    
+    const result = await database
+      .prepare('SELECT * FROM Bid WHERE id = ?')
+      .bind(data.id)
+      .first<Bid>();
+    
+    if (!result) {
+      throw new Error('Failed to create bid');
+    }
+    
+    return result;
+  },
+
+  async getBidsByAuction(auctionId: string): Promise<Bid[]> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.getBidsByAuction(auctionId);
+    }
+    
+    const result = await database
+      .prepare('SELECT * FROM Bid WHERE auctionId = ? ORDER BY amount DESC')
+      .bind(auctionId)
+      .all<Bid>();
+    
+    return result?.results || [];
+  },
+
+  async getBidsByBidder(bidderId: string): Promise<Bid[]> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.getBidsByBidder(bidderId);
+    }
+    
+    const result = await database
+      .prepare('SELECT * FROM Bid WHERE bidderId = ? ORDER BY timestamp DESC')
+      .bind(bidderId)
+      .all<Bid>();
+    
+    return result?.results || [];
+  },
+
+  async getHighestBid(auctionId: string): Promise<Bid | null> {
+    const database = getD1Database();
+    if (!database) {
+      return mockDb.getHighestBid(auctionId);
+    }
+    
+    const result = await database
+      .prepare('SELECT * FROM Bid WHERE auctionId = ? ORDER BY amount DESC LIMIT 1')
+      .bind(auctionId)
+      .first<Bid>();
+    
+    return result || null;
+  },
 };
 
 // In-memory mock database for local development
@@ -588,6 +811,8 @@ export const mockDb = (() => {
   const vegetables = new Map<string, Vegetable>();
   const orders = new Map<string, Order>();
   const orderItems = new Map<string, OrderItem>();
+  const auctions = new Map<string, Auction>();
+  const bids = new Map<string, Bid>();
 
   // Start with test accounts
   const now = Math.floor(Date.now() / 1000);
@@ -866,6 +1091,87 @@ export const mockDb = (() => {
     },
     async getTotalVegetables(): Promise<number> {
       return vegetables.size;
+    },
+
+    // Auction methods
+    async createAuction(data: {
+      id: string;
+      farmerId: string;
+      vegetableId: string;
+      quantity: number;
+      basePrice: number;
+      startTime: number;
+      endTime: number;
+    }): Promise<Auction> {
+      const auction: Auction = {
+        ...data,
+        currentBid: null,
+        highestBidderId: null,
+        status: 'active',
+        createdAt: Math.floor(Date.now() / 1000),
+      };
+      auctions.set(auction.id, auction);
+      return auction;
+    },
+
+    async getAuctionById(id: string): Promise<Auction | null> {
+      return auctions.get(id) || null;
+    },
+
+    async getAllAuctions(): Promise<Auction[]> {
+      return Array.from(auctions.values());
+    },
+
+    async getActiveAuctions(): Promise<Auction[]> {
+      const now = Math.floor(Date.now() / 1000);
+      return Array.from(auctions.values()).filter(
+        a => a.status === 'active' && a.endTime > now
+      );
+    },
+
+    async getAuctionsByFarmer(farmerId: string): Promise<Auction[]> {
+      return Array.from(auctions.values()).filter(a => a.farmerId === farmerId);
+    },
+
+    async updateAuction(id: string, updates: Partial<Auction>): Promise<Auction | null> {
+      const auction = auctions.get(id);
+      if (!auction) return null;
+      const updated = { ...auction, ...updates };
+      auctions.set(id, updated);
+      return updated;
+    },
+
+    async createBid(data: {
+      id: string;
+      auctionId: string;
+      bidderId: string;
+      amount: number;
+    }): Promise<Bid> {
+      const bid: Bid = {
+        ...data,
+        timestamp: Math.floor(Date.now() / 1000),
+      };
+      bids.set(bid.id, bid);
+      return bid;
+    },
+
+    async getBidsByAuction(auctionId: string): Promise<Bid[]> {
+      return Array.from(bids.values())
+        .filter(b => b.auctionId === auctionId)
+        .sort((a, b) => b.amount - a.amount);
+    },
+
+    async getBidsByBidder(bidderId: string): Promise<Bid[]> {
+      return Array.from(bids.values())
+        .filter(b => b.bidderId === bidderId)
+        .sort((a, b) => b.timestamp - a.timestamp);
+    },
+
+    async getHighestBid(auctionId: string): Promise<Bid | null> {
+      const auctionBids = Array.from(bids.values())
+        .filter(b => b.auctionId === auctionId)
+        .sort((a, b) => b.amount - a.amount);
+      return auctionBids[0] || null;
     },
   };
 })();
