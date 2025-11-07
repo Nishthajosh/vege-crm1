@@ -43,20 +43,24 @@ export interface Vegetable {
   name: string;
   price: number;
   quantity: number;
+  unit: string;
   image: string | null;
   description: string | null;
+  farmerId?: string;
   createdAt: number;
 }
 
 export interface Order {
   id: string;
   userId: string;
+  retailerId?: string;
   date: string;
   name: string;
   quantity: number;
   totalPrice: number;
+  totalAmount?: number;
   status: string;
-  createdAt: number;
+  createdAt: number | string;
 }
 
 export interface OrderItem {

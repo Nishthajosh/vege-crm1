@@ -10,6 +10,8 @@ interface Vegetable {
   id: string;
   name: string;
   price: number;
+  quantity: number;
+  unit: string;
   image: string | null;
   description: string | null;
 }
@@ -24,6 +26,8 @@ export default function VegetablesPage() {
   const [formData, setFormData] = useState({
     name: "",
     price: "",
+    quantity: "",
+    unit: "kg",
     image: "",
     description: "",
   });
@@ -82,6 +86,8 @@ export default function VegetablesPage() {
     setFormData({
       name: vegetable.name,
       price: vegetable.price.toString(),
+      quantity: vegetable.quantity?.toString() || "",
+      unit: vegetable.unit || "kg",
       image: vegetable.image || "",
       description: vegetable.description || "",
     });
@@ -127,18 +133,29 @@ export default function VegetablesPage() {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Manage Vegetables
-            </h1>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Manage Vegetables
+              </h1>
+              <Link
+                href="/broker/dashboard"
+                className="inline-flex items-center text-primary hover:text-primary/80 mt-2"
+              >
+                <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Dashboard
+              </Link>
+            </div>
             <button
               onClick={() => {
                 setEditingVegetable(null);
-                setFormData({ name: "", price: "", image: "", description: "" });
+                setFormData({ name: "", price: "", quantity: "", unit: "kg", image: "", description: "" });
                 setShowModal(true);
               }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md text-sm font-medium"
             >
-              Add Vegetable
+              + Add Product
             </button>
           </div>
 
@@ -159,8 +176,11 @@ export default function VegetablesPage() {
                   <h3 className="text-lg font-medium text-gray-900">
                     {vegetable.name}
                   </h3>
-                  <p className="text-2xl font-bold text-indigo-600 mt-2">
-                    ${vegetable.price.toFixed(2)}
+                  <p className="text-2xl font-bold text-primary mt-2">
+                    ₹{vegetable.price.toFixed(2)}/{vegetable.unit}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Stock: {vegetable.quantity} {vegetable.unit}
                   </p>
                   {vegetable.description && (
                     <p className="text-sm text-gray-500 mt-2">
@@ -170,7 +190,7 @@ export default function VegetablesPage() {
                   <div className="mt-4 flex space-x-2">
                     <button
                       onClick={() => handleEdit(vegetable)}
-                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium"
+                      className="flex-1 bg-primary hover:bg-primary/90 text-white px-3 py-2 rounded-md text-sm font-medium"
                     >
                       Edit
                     </button>
@@ -197,15 +217,15 @@ export default function VegetablesPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              {editingVegetable ? "Edit Vegetable" : "Add Vegetable"}
+          <div className="relative top-10 mx-auto p-6 border w-full max-w-lg shadow-lg rounded-md bg-white my-10">
+            <h3 className="text-xl font-bold text-gray-900 mb-6">
+              {editingVegetable ? "Edit Product" : "Add New Product"}
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Name
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Vegetable Name *
                   </label>
                   <input
                     type="text"
@@ -214,26 +234,84 @@ export default function VegetablesPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"
+                    className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary focus:border-primary"
+                    placeholder="e.g., Tomato, Potato"
                   />
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Price (₹) *
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      required
+                      value={formData.price}
+                      onChange={(e) =>
+                        setFormData({ ...formData, price: e.target.value })
+                      }
+                      className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary focus:border-primary"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Unit *
+                    </label>
+                    <select
+                      required
+                      value={formData.unit}
+                      onChange={(e) =>
+                        setFormData({ ...formData, unit: e.target.value })
+                      }
+                      className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary focus:border-primary"
+                    >
+                      <option value="kg">kg</option>
+                      <option value="g">g</option>
+                      <option value="piece">piece</option>
+                      <option value="dozen">dozen</option>
+                      <option value="bunch">bunch</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Price
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Quantity (in {formData.unit}) *
                   </label>
                   <input
                     type="number"
                     step="0.01"
                     required
-                    value={formData.price}
+                    value={formData.quantity}
                     onChange={(e) =>
-                      setFormData({ ...formData, price: e.target.value })
+                      setFormData({ ...formData, quantity: e.target.value })
                     }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"
+                    className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary focus:border-primary"
+                    placeholder="Available stock"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                    className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary focus:border-primary"
+                    rows={3}
+                    placeholder="Brief description about the vegetable..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Image URL
                   </label>
                   <input
@@ -242,40 +320,33 @@ export default function VegetablesPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, image: e.target.value })
                     }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"
+                    className="block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-primary focus:border-primary"
                     placeholder="/vegetables/tomato.svg"
                   />
                   <p className="mt-1 text-xs text-gray-500">
-                    Available images: /vegetables/tomato.svg, /vegetables/potato.svg, /vegetables/carrot.svg, /vegetables/onion.svg, /vegetables/cabbage.svg, /vegetables/cucumber.svg
+                    Available: tomato.svg, potato.svg, carrot.svg, onion.svg, cabbage.svg, cucumber.svg
                   </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Description
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"
-                    rows={3}
-                  />
+                  {formData.image && (
+                    <div className="mt-2">
+                      <img src={formData.image} alt="Preview" className="w-20 h-20 object-cover rounded border" />
+                    </div>
+                  )}
                 </div>
               </div>
+              
               <div className="mt-6 flex space-x-3">
                 <button
                   type="submit"
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md text-sm font-medium"
                 >
-                  {editingVegetable ? "Update" : "Create"}
+                  {editingVegetable ? "Update Product" : "Create Product"}
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     setShowModal(false);
                     setEditingVegetable(null);
-                    setFormData({ name: "", price: "", image: "", description: "" });
+                    setFormData({ name: "", price: "", quantity: "", unit: "kg", image: "", description: "" });
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
                 >
