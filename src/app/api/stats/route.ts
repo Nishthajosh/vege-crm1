@@ -6,14 +6,27 @@ import { db } from '@/lib/db';
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    
+    console.log('Stats API - Session:', session);
+    
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userRole = (session.user as any).role;
+    // Get user from database to ensure we have the role
+    const user = await db.getUserByEmail(session.user.email);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    const userRole = user.role;
+    console.log('Stats API - User role:', userRole);
 
     // Different stats for different roles
     if (userRole === 'farmer') {
@@ -49,11 +62,6 @@ export async function GET() {
       });
     } else if (userRole === 'retailer') {
       // Retailer stats: cart items, orders, spent, available vegetables
-      const user = await db.getUserByEmail(session.user.email!);
-      if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 });
-      }
-      
       const vegetables = await db.getAllVegetables();
       const orders = await db.getOrdersByUserId(user.id);
       
