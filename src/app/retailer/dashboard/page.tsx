@@ -24,14 +24,43 @@ export default function RetailerDashboard() {
 
   useEffect(() => {
     fetchStats();
+    updateCartCount();
+    
+    // Update cart count when returning to dashboard
+    const handleFocus = () => {
+      updateCartCount();
+    };
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
+
+  const updateCartCount = () => {
+    const savedCart = localStorage.getItem('vegetableCart');
+    if (savedCart) {
+      const cart = JSON.parse(savedCart);
+      const itemCount = Object.keys(cart).length;
+      setStats(prev => ({ ...prev, cartItems: itemCount }));
+    } else {
+      setStats(prev => ({ ...prev, cartItems: 0 }));
+    }
+  };
 
   const fetchStats = async () => {
     try {
       const response = await fetch('/api/stats');
       if (response.ok) {
         const data = await response.json();
-        setStats(data);
+        // Get cart count from localStorage instead of API
+        const savedCart = localStorage.getItem('vegetableCart');
+        const cartItemCount = savedCart ? Object.keys(JSON.parse(savedCart)).length : 0;
+        
+        setStats({
+          ...data,
+          cartItems: cartItemCount, // Override with localStorage value
+        });
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
