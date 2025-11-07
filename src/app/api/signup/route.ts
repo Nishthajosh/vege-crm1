@@ -5,6 +5,13 @@ import { sendVerificationEmail } from '@/lib/email';
 import { randomBytes } from 'crypto';
 
 export async function POST(request: NextRequest) {
+  // 🚫 Registration is disabled
+  return NextResponse.json(
+    { error: 'Registration is currently disabled. Please contact the administrator.' },
+    { status: 403 }
+  );
+
+  /* Original registration code - commented out
   try {
     const body = await request.json();
     const { email, password, name, role } = body;
@@ -91,5 +98,5 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+  */
 }
-
