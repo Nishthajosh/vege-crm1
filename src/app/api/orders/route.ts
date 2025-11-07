@@ -7,14 +7,23 @@ import { randomBytes } from 'crypto';
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const userRole = (session.user as any).role;
+    // Get user from database
+    const user = await db.getUserByEmail(session.user.email);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    const userRole = user.role;
     
     if (userRole === 'broker' || userRole === 'farmer') {
       // Broker and Farmer can see all orders
@@ -47,7 +56,7 @@ export async function GET() {
       return NextResponse.json(ordersWithItems);
     } else if (userRole === 'retailer') {
       // Retailer can only see their own orders
-      const userId = (session.user as any).id;
+      const userId = user.id;
       const orders = await db.getOrdersByUserId(userId);
       
       // Get order items and populate with vegetable info
@@ -93,15 +102,26 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== 'retailer') {
+    if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
+    // Get user from database to ensure we have the role and ID
+    const user = await db.getUserByEmail(session.user.email);
+    if (!user || user.role !== 'retailer') {
+      return NextResponse.json(
+        { error: 'Unauthorized - Only retailers can create orders' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { date, name, quantity, totalPrice, items } = body;
+
+    console.log('Order creation request:', { date, name, quantity, totalPrice, items });
 
     if (!date || !name || !quantity || !totalPrice || !items || !Array.isArray(items)) {
       return NextResponse.json(
@@ -110,8 +130,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userId = (session.user as any).id;
+    const userId = user.id;
     const orderId = `order_${randomBytes(16).toString('hex')}`;
+    
+    console.log('Creating order with ID:', orderId, 'for user:', userId);
     
     const order = await db.createOrder({
       id: orderId,
@@ -123,9 +145,12 @@ export async function POST(request: NextRequest) {
       status: 'pending',
     });
 
+    console.log('Order created:', order);
+
     // Create order items
     for (const item of items) {
       const itemId = `item_${randomBytes(16).toString('hex')}`;
+      console.log('Creating order item:', itemId, item);
       await db.createOrderItem({
         id: itemId,
         orderId,
@@ -135,6 +160,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    console.log('Order completed successfully');
     return NextResponse.json(order, { status: 201 });
   } catch (error) {
     console.error('Error creating order:', error);
