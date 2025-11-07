@@ -73,7 +73,7 @@ export default function VegetablesPage() {
       if (response.ok) {
         setShowModal(false);
         setEditingVegetable(null);
-        setFormData({ name: "", price: "", image: "", description: "" });
+        setFormData({ name: "", price: "", quantity: "", unit: "kg", image: "", description: "" });
         fetchVegetables();
       }
     } catch (error) {

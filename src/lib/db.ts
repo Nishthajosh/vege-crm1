@@ -874,6 +874,7 @@ export const mockDb = (() => {
       name: 'Tomato',
       price: 45.50,
       quantity: 100,
+      unit: 'kg',
       image: '/vegetables/tomato.svg',
       description: 'Fresh red tomatoes',
       createdAt: now,
@@ -883,6 +884,7 @@ export const mockDb = (() => {
       name: 'Potato',
       price: 30.00,
       quantity: 200,
+      unit: 'kg',
       image: '/vegetables/potato.svg',
       description: 'Fresh potatoes',
       createdAt: now,
@@ -892,6 +894,7 @@ export const mockDb = (() => {
       name: 'Onion',
       price: 35.75,
       quantity: 150,
+      unit: 'kg',
       image: '/vegetables/onion.svg',
       description: 'Fresh onions',
       createdAt: now,
@@ -901,6 +904,7 @@ export const mockDb = (() => {
       name: 'Carrot',
       price: 40.00,
       quantity: 120,
+      unit: 'kg',
       image: '/vegetables/carrot.svg',
       description: 'Fresh carrots',
       createdAt: now,
@@ -910,6 +914,7 @@ export const mockDb = (() => {
       name: 'Cabbage',
       price: 25.50,
       quantity: 80,
+      unit: 'kg',
       image: '/vegetables/cabbage.svg',
       description: 'Fresh green cabbage',
       createdAt: now,
@@ -1144,12 +1149,13 @@ export const mockDb = (() => {
     async getVegetableById(id: string): Promise<Vegetable | null> {
       return vegetables.get(id) || null;
     },
-    async createVegetable(data: { id: string; name: string; price: number; quantity: number; image?: string; description?: string; }): Promise<Vegetable> {
+    async createVegetable(data: { id: string; name: string; price: number; quantity: number; unit?: string; image?: string; description?: string; }): Promise<Vegetable> {
       const veg: Vegetable = {
         id: data.id,
         name: data.name,
         price: data.price,
         quantity: data.quantity,
+        unit: data.unit || 'kg',
         image: data.image || null,
         description: data.description || null,
         createdAt: Math.floor(Date.now() / 1000),
@@ -1169,13 +1175,21 @@ export const mockDb = (() => {
     },
 
     async getAllOrders(): Promise<Order[]> {
-      return Array.from(orders.values()).sort((a, b) => b.createdAt - a.createdAt);
+      return Array.from(orders.values()).sort((a, b) => {
+        const aTime = typeof a.createdAt === 'string' ? new Date(a.createdAt).getTime() : a.createdAt;
+        const bTime = typeof b.createdAt === 'string' ? new Date(b.createdAt).getTime() : b.createdAt;
+        return bTime - aTime;
+      });
     },
     async getOrderById(id: string): Promise<Order | null> {
       return orders.get(id) || null;
     },
     async getOrdersByUserId(userId: string): Promise<Order[]> {
-      return Array.from(orders.values()).filter(o => o.userId === userId).sort((a, b) => b.createdAt - a.createdAt);
+      return Array.from(orders.values()).filter(o => o.userId === userId).sort((a, b) => {
+        const aTime = typeof a.createdAt === 'string' ? new Date(a.createdAt).getTime() : a.createdAt;
+        const bTime = typeof b.createdAt === 'string' ? new Date(b.createdAt).getTime() : b.createdAt;
+        return bTime - aTime;
+      });
     },
     async createOrder(data: { id: string; userId: string; date: string; name: string; quantity: number; totalPrice: number; status?: string; }): Promise<Order> {
       const order: Order = {

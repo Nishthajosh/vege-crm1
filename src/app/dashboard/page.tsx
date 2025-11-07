@@ -77,7 +77,8 @@ export default async function DashboardPage() {
   const demandMap = new Map<string, number>();
 
   for (const order of orders) {
-    if (order.createdAt >= startOfDay && order.createdAt <= endOfDay) {
+    const orderTime = typeof order.createdAt === 'string' ? new Date(order.createdAt).getTime() : order.createdAt;
+    if (orderTime >= startOfDay && orderTime <= endOfDay) {
       todaysCollection += order.quantity || 0;
     }
     monthlyRevenue += order.totalPrice || 0;
@@ -123,7 +124,11 @@ export default async function DashboardPage() {
   // Recent orders with items (limit 5)
   const recentOrders = await Promise.all(
     orders
-      .sort((a, b) => b.createdAt - a.createdAt)
+      .sort((a, b) => {
+        const aTime = typeof a.createdAt === 'string' ? new Date(a.createdAt).getTime() : a.createdAt;
+        const bTime = typeof b.createdAt === 'string' ? new Date(b.createdAt).getTime() : b.createdAt;
+        return bTime - aTime;
+      })
       .slice(0, 5)
       .map(async (order) => {
         const items = await dataSource.getOrderItemsByOrderId(order.id);
