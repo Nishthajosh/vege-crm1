@@ -26,7 +26,8 @@ export default function SalesResultsPage() {
     try {
       const response = await fetch('/api/orders');
       if (response.ok) {
-        const orders = await response.json();
+        const data = await response.json();
+        const orders = data.orders || data || [];
         
         // Aggregate sales by vegetable
         const salesMap = new Map<string, SalesData>();
@@ -36,18 +37,19 @@ export default function SalesResultsPage() {
         orders.forEach((order: any) => {
           if (order.items && Array.isArray(order.items)) {
             order.items.forEach((item: any) => {
-              const existing = salesMap.get(item.vegetableName) || {
-                vegetableName: item.vegetableName,
+              const vegName = item.vegetable?.name || item.vegetableName || 'Unknown';
+              const existing = salesMap.get(vegName) || {
+                vegetableName: vegName,
                 totalSold: 0,
                 totalRevenue: 0,
                 status: 'Active',
-                image: item.image,
+                image: item.vegetable?.image || item.image,
               };
               
               const itemRevenue = item.quantity * item.price;
               existing.totalSold += item.quantity;
               existing.totalRevenue += itemRevenue;
-              salesMap.set(item.vegetableName, existing);
+              salesMap.set(vegName, existing);
               
               revenue += itemRevenue;
               quantitySold += item.quantity;

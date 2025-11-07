@@ -23,7 +23,8 @@ export default function DemandPage() {
     try {
       const response = await fetch('/api/orders');
       if (response.ok) {
-        const orders = await response.json();
+        const data = await response.json();
+        const orders = data.orders || data || [];
         
         // Aggregate demand by vegetable
         const demandMap = new Map<string, DemandData>();
@@ -31,16 +32,17 @@ export default function DemandPage() {
         orders.forEach((order: any) => {
           if (order.items && Array.isArray(order.items)) {
             order.items.forEach((item: any) => {
-              const existing = demandMap.get(item.vegetableName) || {
-                vegetableName: item.vegetableName,
+              const vegName = item.vegetable?.name || item.vegetableName || 'Unknown';
+              const existing = demandMap.get(vegName) || {
+                vegetableName: vegName,
                 totalOrders: 0,
                 totalQuantity: 0,
-                image: item.image,
+                image: item.vegetable?.image || item.image,
               };
               
               existing.totalOrders += 1;
               existing.totalQuantity += item.quantity;
-              demandMap.set(item.vegetableName, existing);
+              demandMap.set(vegName, existing);
             });
           }
         });
