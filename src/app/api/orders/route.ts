@@ -16,15 +16,65 @@ export async function GET() {
 
     const userRole = (session.user as any).role;
     
-    if (userRole === 'broker') {
-      // Broker can see all orders
+    if (userRole === 'broker' || userRole === 'farmer') {
+      // Broker and Farmer can see all orders
       const orders = await db.getAllOrders();
-      return NextResponse.json(orders);
+      
+      // Get order items and populate with vegetable info
+      const ordersWithItems = await Promise.all(
+        orders.map(async (order) => {
+          const items = await db.getOrderItemsByOrderId(order.id);
+          
+          // Populate items with vegetable details
+          const populatedItems = await Promise.all(
+            items.map(async (item: any) => {
+              const vegetable = await db.getVegetableById(item.vegetableId);
+              return {
+                ...item,
+                vegetableName: vegetable?.name || 'Unknown',
+                image: vegetable?.image || null,
+              };
+            })
+          );
+          
+          return {
+            ...order,
+            items: populatedItems,
+          };
+        })
+      );
+      
+      return NextResponse.json(ordersWithItems);
     } else if (userRole === 'retailer') {
       // Retailer can only see their own orders
       const userId = (session.user as any).id;
       const orders = await db.getOrdersByUserId(userId);
-      return NextResponse.json(orders);
+      
+      // Get order items and populate with vegetable info
+      const ordersWithItems = await Promise.all(
+        orders.map(async (order) => {
+          const items = await db.getOrderItemsByOrderId(order.id);
+          
+          // Populate items with vegetable details
+          const populatedItems = await Promise.all(
+            items.map(async (item: any) => {
+              const vegetable = await db.getVegetableById(item.vegetableId);
+              return {
+                ...item,
+                vegetableName: vegetable?.name || 'Unknown',
+                image: vegetable?.image || null,
+              };
+            })
+          );
+          
+          return {
+            ...order,
+            items: populatedItems,
+          };
+        })
+      );
+      
+      return NextResponse.json(ordersWithItems);
     }
 
     return NextResponse.json(
