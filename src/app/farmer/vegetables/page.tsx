@@ -115,58 +115,78 @@ export default function VegetablesPage() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vegetables.map((vegetable) => (
-                <div key={vegetable.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                  <div className="p-6">
-                    {vegetable.image && (
-                      <div className="flex justify-center mb-4">
-                        <img
-                          src={vegetable.image}
-                          alt={vegetable.name}
-                          className="h-24 w-24 object-contain"
-                        />
-                      </div>
-                    )}
-                    <h3 className="text-lg font-semibold text-gray-900 text-center">
-                      {vegetable.name}
-                    </h3>
-                    {vegetable.description && (
-                      <p className="mt-2 text-sm text-gray-600 text-center">
-                        {vegetable.description}
-                      </p>
-                    )}
-                    <div className="mt-4 grid grid-cols-2 gap-4">
-                      <div className="text-center">
-                        <p className="text-sm text-gray-500">Quantity</p>
-                        <p className="text-lg font-semibold text-gray-900">
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Image
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Description
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Quantity
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Price
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {vegetables.map((vegetable) => (
+                    <tr key={vegetable.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {vegetable.image && (
+                          <img
+                            src={vegetable.image}
+                            alt={vegetable.name}
+                            className="h-16 w-16 object-contain"
+                          />
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-gray-900">{vegetable.name}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-600 max-w-xs">
+                          {vegetable.description || '-'}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-gray-900">
                           {vegetable.quantity} kg
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm text-gray-500">Price</p>
-                        <p className="text-lg font-semibold text-green-600">
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-green-600">
                           ₹{vegetable.price}/kg
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 px-6 py-3 flex justify-between">
-                    <button
-                      onClick={() => router.push(`/farmer/vegetables/edit/${vegetable.id}`)}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(vegetable.id)}
-                      className="text-red-600 hover:text-red-800 text-sm font-medium"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => router.push(`/farmer/vegetables/edit/${vegetable.id}`)}
+                          className="text-blue-600 hover:text-blue-800 mr-4"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(vegetable.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
