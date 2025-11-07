@@ -104,6 +104,10 @@ export default function CartPage() {
     setCheckingOut(true);
 
     try {
+      const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      const totalPrice = calculateTotal();
+      const todayDate = new Date().toISOString().split('T')[0];
+
       const orderItems = cartItems.map((item) => ({
         vegetableId: item.vegetableId,
         vegetableName: item.name,
@@ -115,21 +119,27 @@ export default function CartPage() {
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: orderItems }),
+        body: JSON.stringify({
+          date: todayDate,
+          name: 'Retailer Order',
+          quantity: totalQuantity,
+          totalPrice: totalPrice,
+          items: orderItems
+        }),
       });
 
       if (response.ok) {
-        alert('Order placed successfully!');
         clearCart();
         router.push('/retailer/orders');
+        router.refresh();
       } else {
         const error = await response.json();
         alert(error.error || 'Failed to place order');
+        setCheckingOut(false);
       }
     } catch (error) {
       console.error('Error placing order:', error);
       alert('Failed to place order');
-    } finally {
       setCheckingOut(false);
     }
   };

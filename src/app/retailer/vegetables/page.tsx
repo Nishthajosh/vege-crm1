@@ -126,7 +126,7 @@ export default function BrowseVegetablesPage() {
                       </div>
                       <div className="text-center">
                         <p className="text-sm text-gray-500">Price</p>
-                        <p className="text-lg font-semibold text-green-600">?{vegetable.price}/kg</p>
+                        <p className="text-lg font-semibold text-green-600">₹{vegetable.price}/kg</p>
                       </div>
                     </div>
                     {getCartQuantity(vegetable.id) > 0 && (
