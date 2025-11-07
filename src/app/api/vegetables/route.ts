@@ -20,7 +20,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user || (session.user as any).role !== 'broker') {
+    if (!session?.user || !['broker', 'farmer'].includes((session.user as any).role)) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -28,11 +28,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, price, image, description } = body;
+    const { name, price, quantity, image, description } = body;
 
-    if (!name || !price) {
+    if (!name || !price || !quantity) {
       return NextResponse.json(
-        { error: 'Name and price are required' },
+        { error: 'Name, price, and quantity are required' },
         { status: 400 }
       );
     }
@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
       id: vegetableId,
       name,
       price: parseFloat(price),
+      quantity: parseFloat(quantity),
       image: image || null,
       description: description || null,
     });

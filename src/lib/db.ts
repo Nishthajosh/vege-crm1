@@ -42,6 +42,7 @@ export interface Vegetable {
   id: string;
   name: string;
   price: number;
+  quantity: number;
   image: string | null;
   description: string | null;
   createdAt: number;
@@ -296,6 +297,7 @@ export const db = {
     id: string;
     name: string;
     price: number;
+    quantity: number;
     image?: string;
     description?: string;
   }): Promise<Vegetable> {
@@ -308,12 +310,13 @@ export const db = {
     
     await database
       .prepare(
-        'INSERT INTO Vegetable (id, name, price, image, description, createdAt) VALUES (?, ?, ?, ?, ?, ?)'
+        'INSERT INTO Vegetable (id, name, price, quantity, image, description, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)'
       )
       .bind(
         data.id,
         data.name,
         data.price,
+        data.quantity,
         data.image || null,
         data.description || null,
         now
@@ -866,6 +869,7 @@ export const mockDb = (() => {
       id: 'veg_1',
       name: 'Tomato',
       price: 45.50,
+      quantity: 100,
       image: '/vegetables/tomato.svg',
       description: 'Fresh red tomatoes',
       createdAt: now,
@@ -874,6 +878,7 @@ export const mockDb = (() => {
       id: 'veg_2',
       name: 'Potato',
       price: 30.00,
+      quantity: 200,
       image: '/vegetables/potato.svg',
       description: 'Fresh potatoes',
       createdAt: now,
@@ -882,6 +887,7 @@ export const mockDb = (() => {
       id: 'veg_3',
       name: 'Onion',
       price: 35.75,
+      quantity: 150,
       image: '/vegetables/onion.svg',
       description: 'Fresh onions',
       createdAt: now,
@@ -890,6 +896,7 @@ export const mockDb = (() => {
       id: 'veg_4',
       name: 'Carrot',
       price: 40.00,
+      quantity: 120,
       image: '/vegetables/carrot.svg',
       description: 'Fresh carrots',
       createdAt: now,
@@ -898,6 +905,7 @@ export const mockDb = (() => {
       id: 'veg_5',
       name: 'Cabbage',
       price: 25.50,
+      quantity: 80,
       image: '/vegetables/cabbage.svg',
       description: 'Fresh green cabbage',
       createdAt: now,
@@ -1132,11 +1140,12 @@ export const mockDb = (() => {
     async getVegetableById(id: string): Promise<Vegetable | null> {
       return vegetables.get(id) || null;
     },
-    async createVegetable(data: { id: string; name: string; price: number; image?: string; description?: string; }): Promise<Vegetable> {
+    async createVegetable(data: { id: string; name: string; price: number; quantity: number; image?: string; description?: string; }): Promise<Vegetable> {
       const veg: Vegetable = {
         id: data.id,
         name: data.name,
         price: data.price,
+        quantity: data.quantity,
         image: data.image || null,
         description: data.description || null,
         createdAt: Math.floor(Date.now() / 1000),
