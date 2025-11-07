@@ -4,6 +4,29 @@ import { hashPassword } from '@/lib/auth';
 import { sendVerificationEmail } from '@/lib/email';
 import { randomBytes } from 'crypto';
 
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const role = searchParams.get('role');
+
+    // Get all users
+    const users = await db.getAllUsers();
+    
+    let filteredUsers = users;
+    if (role) {
+      filteredUsers = users.filter((user: any) => user.role === role);
+    }
+
+    return NextResponse.json({ users: filteredUsers }, { status: 200 });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch users' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   // 🚫 Registration is disabled
   return NextResponse.json(

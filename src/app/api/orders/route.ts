@@ -29,10 +29,13 @@ export async function GET() {
       // Broker and Farmer can see all orders
       const orders = await db.getAllOrders();
       
-      // Get order items and populate with vegetable info
+      // Get order items and populate with vegetable and retailer info
       const ordersWithItems = await Promise.all(
         orders.map(async (order) => {
           const items = await db.getOrderItemsByOrderId(order.id);
+          
+          // Get retailer info
+          const retailer = await db.getUserById(order.retailerId || order.userId);
           
           // Populate items with vegetable details
           const populatedItems = await Promise.all(
@@ -40,20 +43,27 @@ export async function GET() {
               const vegetable = await db.getVegetableById(item.vegetableId);
               return {
                 ...item,
-                vegetableName: vegetable?.name || 'Unknown',
-                image: vegetable?.image || null,
+                vegetable: vegetable ? {
+                  id: vegetable.id,
+                  name: vegetable.name,
+                  unit: vegetable.unit,
+                } : null,
               };
             })
           );
           
           return {
             ...order,
+            retailer: retailer ? {
+              name: retailer.name,
+              email: retailer.email,
+            } : null,
             items: populatedItems,
           };
         })
       );
       
-      return NextResponse.json(ordersWithItems);
+      return NextResponse.json({ orders: ordersWithItems });
     } else if (userRole === 'retailer') {
       // Retailer can only see their own orders
       const userId = user.id;
@@ -70,8 +80,11 @@ export async function GET() {
               const vegetable = await db.getVegetableById(item.vegetableId);
               return {
                 ...item,
-                vegetableName: vegetable?.name || 'Unknown',
-                image: vegetable?.image || null,
+                vegetable: vegetable ? {
+                  id: vegetable.id,
+                  name: vegetable.name,
+                  unit: vegetable.unit,
+                } : null,
               };
             })
           );
@@ -83,7 +96,7 @@ export async function GET() {
         })
       );
       
-      return NextResponse.json(ordersWithItems);
+      return NextResponse.json({ orders: ordersWithItems });
     }
 
     return NextResponse.json(
