@@ -37,16 +37,17 @@ export default function AddVegetablePage() {
       });
 
       if (response.ok) {
-        alert('Vegetable added successfully!');
+        // Redirect immediately without showing alert
         router.push('/farmer/vegetables');
+        router.refresh(); // Force refresh to show updated data
       } else {
         const error = await response.json();
         alert(error.error || 'Failed to add vegetable');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error adding vegetable:', error);
       alert('Failed to add vegetable');
-    } finally {
       setLoading(false);
     }
   };

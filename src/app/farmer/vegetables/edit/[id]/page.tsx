@@ -71,16 +71,17 @@ export default function EditVegetablePage() {
       });
 
       if (response.ok) {
-        alert('Vegetable updated successfully!');
+        // Redirect immediately without showing alert
         router.push('/farmer/vegetables');
+        router.refresh(); // Force refresh to show updated data
       } else {
         const error = await response.json();
         alert(error.error || 'Failed to update vegetable');
+        setSubmitting(false);
       }
     } catch (error) {
       console.error('Error updating vegetable:', error);
       alert('Failed to update vegetable');
-    } finally {
       setSubmitting(false);
     }
   };
