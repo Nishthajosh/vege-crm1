@@ -64,13 +64,16 @@ export default function BrowseVegetablesPage() {
   };
 
   const saveCart = (newCart: { [key: string]: number }) => {
+    console.log('Saving cart to localStorage:', newCart);
     localStorage.setItem('vegetableCart', JSON.stringify(newCart));
     setCart(newCart);
   };
 
   const addToCart = (vegetableId: string, quantity: number) => {
+    console.log('Adding to cart:', { vegetableId, quantity });
     const newCart = { ...cart };
     newCart[vegetableId] = (newCart[vegetableId] || 0) + quantity;
+    console.log('New cart state:', newCart);
     saveCart(newCart);
     alert('Added to cart!');
   };

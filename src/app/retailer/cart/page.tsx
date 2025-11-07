@@ -26,21 +26,26 @@ export default function CartPage() {
   const loadCart = async () => {
     try {
       const savedCart = localStorage.getItem('vegetableCart');
+      console.log('Loading cart from localStorage:', savedCart);
+      
       if (!savedCart) {
         setLoading(false);
         return;
       }
 
       const cart: { [key: string]: number } = JSON.parse(savedCart);
+      console.log('Parsed cart:', cart);
       
       // Fetch vegetable details
       const response = await fetch('/api/vegetables');
       if (response.ok) {
         const vegetables = await response.json();
+        console.log('Fetched vegetables:', vegetables.length);
         
         const items: CartItem[] = [];
         Object.entries(cart).forEach(([id, quantity]) => {
           const veg = vegetables.find((v: any) => v.id === id);
+          console.log(`Looking for vegetable ${id}:`, veg);
           if (veg) {
             items.push({
               vegetableId: veg.id,
@@ -52,6 +57,7 @@ export default function CartPage() {
           }
         });
         
+        console.log('Cart items loaded:', items);
         setCartItems(items);
       }
     } catch (error) {
