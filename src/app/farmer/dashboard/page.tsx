@@ -104,7 +104,7 @@ export default function FarmerDashboard() {
 
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Link href="/farmer/vegetables/add" className="bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-lg text-center font-medium">
                 Add New Vegetable
               </Link>
@@ -113,6 +113,9 @@ export default function FarmerDashboard() {
               </Link>
               <Link href="/farmer/demand" className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-4 rounded-lg text-center font-medium">
                 View Demand
+              </Link>
+              <Link href="/farmer/sales" className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-4 rounded-lg text-center font-medium">
+                Sales Results
               </Link>
             </div>
           </div>
