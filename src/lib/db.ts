@@ -967,6 +967,123 @@ export const mockDb = (() => {
   
   sampleOrderItems.forEach(item => orderItems.set(item.id, item));
 
+  // Add sample auctions
+  const currentTime = Math.floor(Date.now() / 1000);
+  const oneHour = 3600;
+  const twoHours = 7200;
+  const oneDay = 86400;
+
+  const sampleAuctions: Auction[] = [
+    {
+      id: 'auction_1',
+      farmerId: 'user_test_2', // farmer@test.com
+      vegetableId: 'veg_1', // Tomato
+      quantity: 100,
+      basePrice: 40.00,
+      currentBid: 52.00,
+      highestBidderId: 'user_test_3', // retailer@test.com
+      startTime: currentTime - oneHour,
+      endTime: currentTime + twoHours, // Ends in 2 hours
+      status: 'active',
+      createdAt: currentTime - oneHour,
+    },
+    {
+      id: 'auction_2',
+      farmerId: 'user_test_2',
+      vegetableId: 'veg_2', // Potato
+      quantity: 150,
+      basePrice: 28.00,
+      currentBid: null,
+      highestBidderId: null,
+      startTime: currentTime,
+      endTime: currentTime + oneDay, // Ends in 1 day
+      status: 'active',
+      createdAt: currentTime,
+    },
+    {
+      id: 'auction_3',
+      farmerId: 'user_test_2',
+      vegetableId: 'veg_3', // Onion
+      quantity: 80,
+      basePrice: 32.00,
+      currentBid: 35.00,
+      highestBidderId: 'user_test_3',
+      startTime: currentTime - (oneHour * 2),
+      endTime: currentTime + (oneHour * 4), // Ends in 4 hours
+      status: 'active',
+      createdAt: currentTime - (oneHour * 2),
+    },
+    {
+      id: 'auction_4',
+      farmerId: 'user_test_2',
+      vegetableId: 'veg_4', // Carrot
+      quantity: 120,
+      basePrice: 38.00,
+      currentBid: null,
+      highestBidderId: null,
+      startTime: currentTime - oneHour,
+      endTime: currentTime + (oneHour * 6), // Ends in 6 hours
+      status: 'active',
+      createdAt: currentTime - oneHour,
+    },
+    {
+      id: 'auction_5',
+      farmerId: 'user_test_2',
+      vegetableId: 'veg_5', // Cabbage
+      quantity: 60,
+      basePrice: 22.00,
+      currentBid: 28.00,
+      highestBidderId: 'user_test_3',
+      startTime: currentTime - (oneHour * 3),
+      endTime: currentTime - oneHour, // Already ended
+      status: 'completed',
+      createdAt: currentTime - (oneHour * 3),
+    },
+  ];
+
+  sampleAuctions.forEach(auction => auctions.set(auction.id, auction));
+
+  // Add sample bids
+  const sampleBids: Bid[] = [
+    {
+      id: 'bid_1',
+      auctionId: 'auction_1',
+      bidderId: 'user_test_3',
+      amount: 45.00,
+      timestamp: currentTime - (oneHour * 0.8),
+    },
+    {
+      id: 'bid_2',
+      auctionId: 'auction_1',
+      bidderId: 'user_test_3',
+      amount: 52.00,
+      timestamp: currentTime - (oneHour * 0.5),
+    },
+    {
+      id: 'bid_3',
+      auctionId: 'auction_3',
+      bidderId: 'user_test_3',
+      amount: 35.00,
+      timestamp: currentTime - (oneHour * 1.5),
+    },
+    {
+      id: 'bid_4',
+      auctionId: 'auction_5',
+      bidderId: 'user_test_3',
+      amount: 25.00,
+      timestamp: currentTime - (oneHour * 2.5),
+    },
+    {
+      id: 'bid_5',
+      auctionId: 'auction_5',
+      bidderId: 'user_test_3',
+      amount: 28.00,
+      timestamp: currentTime - (oneHour * 1.2),
+    },
+  ];
+
+  sampleBids.forEach(bid => bids.set(bid.id, bid));
+
   return {
     async getUserByEmail(email: string): Promise<User | null> {
       for (const user of users.values()) {
