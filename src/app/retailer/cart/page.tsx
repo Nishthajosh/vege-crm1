@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
 interface CartItem {
-  vegetableId: number;
+  vegetableId: string;
   name: string;
   quantity: number;
   price: number;
@@ -31,7 +31,7 @@ export default function CartPage() {
         return;
       }
 
-      const cart: { [key: number]: number } = JSON.parse(savedCart);
+      const cart: { [key: string]: number } = JSON.parse(savedCart);
       
       // Fetch vegetable details
       const response = await fetch('/api/vegetables');
@@ -40,7 +40,7 @@ export default function CartPage() {
         
         const items: CartItem[] = [];
         Object.entries(cart).forEach(([id, quantity]) => {
-          const veg = vegetables.find((v: any) => v.id === parseInt(id));
+          const veg = vegetables.find((v: any) => v.id === id);
           if (veg) {
             items.push({
               vegetableId: veg.id,
@@ -61,7 +61,7 @@ export default function CartPage() {
     }
   };
 
-  const updateQuantity = (vegetableId: number, newQuantity: number) => {
+  const updateQuantity = (vegetableId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeItem(vegetableId);
       return;
@@ -76,7 +76,7 @@ export default function CartPage() {
     }
   };
 
-  const removeItem = (vegetableId: number) => {
+  const removeItem = (vegetableId: string) => {
     const savedCart = localStorage.getItem('vegetableCart');
     if (savedCart) {
       const cart = JSON.parse(savedCart);

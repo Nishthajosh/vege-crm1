@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
 interface Vegetable {
-  id: number;
+  id: string;
   name: string;
   quantity: number;
   price: number;
@@ -18,7 +18,7 @@ export default function BrowseVegetablesPage() {
   const [filteredVegetables, setFilteredVegetables] = useState<Vegetable[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [cart, setCart] = useState<{ [key: number]: number }>({});
+  const [cart, setCart] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     fetchVegetables();
@@ -63,19 +63,19 @@ export default function BrowseVegetablesPage() {
     }
   };
 
-  const saveCart = (newCart: { [key: number]: number }) => {
+  const saveCart = (newCart: { [key: string]: number }) => {
     localStorage.setItem('vegetableCart', JSON.stringify(newCart));
     setCart(newCart);
   };
 
-  const addToCart = (vegetableId: number, quantity: number) => {
+  const addToCart = (vegetableId: string, quantity: number) => {
     const newCart = { ...cart };
     newCart[vegetableId] = (newCart[vegetableId] || 0) + quantity;
     saveCart(newCart);
     alert('Added to cart!');
   };
 
-  const getCartQuantity = (vegetableId: number) => {
+  const getCartQuantity = (vegetableId: string) => {
     return cart[vegetableId] || 0;
   };
 
