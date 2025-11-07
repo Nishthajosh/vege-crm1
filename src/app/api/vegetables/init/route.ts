@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { db } from '@/lib/db';
-import { v4 as uuidv4 } from 'uuid';
+import { randomBytes } from 'crypto';
 
 export async function POST() {
   try {
@@ -77,7 +77,7 @@ export async function POST() {
     const createdVegetables = [];
     for (const veg of defaultVegetables) {
       const vegetable = await db.createVegetable({
-        id: uuidv4(),
+        id: `veg_${randomBytes(16).toString('hex')}`,
         name: veg.name,
         price: veg.price,
         quantity: veg.quantity,
