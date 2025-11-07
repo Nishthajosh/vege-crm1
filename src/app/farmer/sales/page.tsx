@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Link from 'next/link';
 
 interface SalesData {
   vegetableName: string;
@@ -74,11 +75,19 @@ export default function SalesResultsPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Sales Results</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              View your sales performance and revenue
-            </p>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Sales Results</h1>
+              <p className="mt-2 text-sm text-gray-600">
+                View your sales performance and revenue
+              </p>
+            </div>
+            <Link
+              href="/farmer/dashboard"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+            >
+              ← Dashboard
+            </Link>
           </div>
 
           {/* Summary Cards */}

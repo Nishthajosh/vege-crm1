@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Link from 'next/link';
 
 interface DemandData {
   vegetableName: string;
@@ -62,11 +63,19 @@ export default function DemandPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Vegetable Demand</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              See which vegetables are most in demand by retailers
-            </p>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Vegetable Demand</h1>
+              <p className="mt-2 text-sm text-gray-600">
+                See which vegetables are most in demand by retailers
+              </p>
+            </div>
+            <Link
+              href="/farmer/dashboard"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+            >
+              ← Dashboard
+            </Link>
           </div>
 
           {loading ? (

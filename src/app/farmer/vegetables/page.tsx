@@ -68,12 +68,20 @@ export default function VegetablesPage() {
               <h1 className="text-3xl font-bold text-gray-900">My Vegetables</h1>
               <p className="mt-2 text-sm text-gray-600">Manage your vegetable inventory</p>
             </div>
-            <Link
-              href="/farmer/vegetables/add"
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium"
-            >
-              + Add New Vegetable
-            </Link>
+            <div className="flex gap-3">
+              <Link
+                href="/farmer/dashboard"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+              >
+                ← Dashboard
+              </Link>
+              <Link
+                href="/farmer/vegetables/add"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium"
+              >
+                + Add New Vegetable
+              </Link>
+            </div>
           </div>
 
           {loading ? (

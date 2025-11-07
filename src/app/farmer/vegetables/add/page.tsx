@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import Link from 'next/link';
 import ImageUploader from '@/components/ImageUploader';
 
 export default function AddVegetablePage() {
@@ -57,9 +58,17 @@ export default function AddVegetablePage() {
       <Navbar />
       <div className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Add New Vegetable</h1>
-            <p className="mt-2 text-sm text-gray-600">Fill in the details to add a new vegetable to your inventory</p>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Add New Vegetable</h1>
+              <p className="mt-2 text-sm text-gray-600">Fill in the details to add a new vegetable to your inventory</p>
+            </div>
+            <Link
+              href="/farmer/dashboard"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md font-medium"
+            >
+              ← Dashboard
+            </Link>
           </div>
 
           <div className="bg-white shadow rounded-lg p-6">
