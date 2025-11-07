@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const handleSignOut = async () => {
-    await signOut({ redirect: true, callbackUrl: "/" });
+    await signOut({ redirect: true, callbackUrl: "/login" });
   };
 
   const value = {
