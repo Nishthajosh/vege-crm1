@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginForm() {
@@ -13,6 +13,8 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const callbackUrl = searchParams?.get("callbackUrl") || undefined;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,30 +32,39 @@ function LoginForm() {
         email,
         password,
         redirect: false,
+        callbackUrl,
       });
 
       if (result?.error) {
         throw new Error(result.error);
       }
 
-      // Wait a bit for session to be established
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Fetch user session to get role
-      const response = await fetch("/api/auth/session");
-      const session = await response.json();
-      
-      // Redirect based on role
-      if (session?.user?.role === "broker") {
-        window.location.href = "/broker/dashboard";
-      } else if (session?.user?.role === "farmer") {
-        window.location.href = "/farmer/dashboard";
-      } else if (session?.user?.role === "retailer") {
-        window.location.href = "/retailer/vegetables";
-      } else if (session?.user?.role === "admin") {
-        window.location.href = "/dashboard";
+      // Ensure session is available before redirecting
+      let session = await getSession();
+
+      if (!session) {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        session = await getSession();
+      }
+
+      if (!session?.user) {
+        throw new Error("Unable to load session. Please try again.");
+      }
+
+      const role = (session.user as any)?.role;
+
+      if (role === "broker") {
+        router.replace("/broker/dashboard");
+      } else if (role === "farmer") {
+        router.replace("/farmer/dashboard");
+      } else if (role === "retailer") {
+        router.replace("/retailer/vegetables");
+      } else if (role === "admin") {
+        router.replace("/dashboard");
+      } else if (callbackUrl) {
+        router.replace(callbackUrl);
       } else {
-        window.location.href = "/dashboard";
+        router.replace("/dashboard");
       }
     } catch (err: any) {
       console.error("Login error:", err);
