@@ -21,10 +21,19 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'broker')) {
-      router.push('/login');
+    if (loading) {
+      return;
     }
-  }, [user, loading, router]);
+
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (user.role !== "broker") {
+      router.replace("/");
+    }
+  }, [loading, router, user]);
 
   useEffect(() => {
     // Load preferences from localStorage

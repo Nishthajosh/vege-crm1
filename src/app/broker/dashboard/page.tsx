@@ -43,10 +43,19 @@ export default function BrokerDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!authLoading && !isBroker) {
-      router.push("/");
+    if (authLoading) {
+      return;
     }
-  }, [authLoading, isBroker, router]);
+
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (!isBroker) {
+      router.replace("/");
+    }
+  }, [authLoading, isBroker, router, user]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {

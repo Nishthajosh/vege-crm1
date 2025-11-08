@@ -37,10 +37,19 @@ export default function FarmersPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'broker')) {
-      router.push('/login');
+    if (loading) {
+      return;
     }
-  }, [user, loading, router]);
+
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (user.role !== "broker") {
+      router.replace("/");
+    }
+  }, [loading, router, user]);
 
   useEffect(() => {
     if (user && user.role === 'broker') {
